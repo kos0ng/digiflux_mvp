@@ -177,7 +177,7 @@
                                 <i class="fas fa-tachometer-alt"></i>Influencer</a>
                         </li>
                         <li class="@yield('profile')">
-                            <a class="js-arrow" href="{{route('home')}}">
+                            <a class="js-arrow" href="{{route('profile')}}">
                                 <i class="fas fa-tachometer-alt"></i>Profil</a>
                         </li>
                         <li style="margin-top: 270%">
@@ -204,7 +204,7 @@
                                 <i class="fas fa-tachometer-alt"></i>Open Campaign</a>
                         </li>
                         <li class="@yield('profile')">
-                            <a class="js-arrow" href="{{route('home')}}">
+                            <a class="js-arrow" href="{{route('profile')}}">
                                 <i class="fas fa-tachometer-alt"></i>Profil</a>
                         </li>
                         <li style="margin-top: 270%">

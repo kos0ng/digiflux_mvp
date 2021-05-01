@@ -274,5 +274,17 @@ class TaskController extends Controller
         $campaign_proc->save();
         return redirect('/dashboard');
     }
+
+    public function profile(){
+        $user = Auth::user();
+        if(Session::get('role')==2){
+            $data['all'] = Influencer::join('users','influencer.id','=','users.id')->first();
+        }
+        else{
+            $data['all'] = $user;   
+        }
+        $data['daerah'] = DB::table('daerah_user')->where('id',$user->id)->get('daerah');
+        return view('dashboard/profile',$data);
+    }
     
 }
