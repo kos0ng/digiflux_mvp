@@ -10,6 +10,7 @@ use App\user;
 use App\Models\Influencer;
 use App\Models\Campaign;
 use App\Models\CampaignProcess;
+use App\Models\DaerahUser;
 use Auth;
 use Session;
 
@@ -285,6 +286,27 @@ class TaskController extends Controller
         }
         $data['daerah'] = DB::table('daerah_user')->where('id',$user->id)->get('daerah');
         return view('dashboard/profile',$data);
+    }
+
+    public function daerah_user(Request $request){
+
+        
+            $daerahuser = new DaerahUser;
+            for($i = 0; $i <= count($request); $i++){
+        
+                $daerahuser[] = [
+                        'percent' => 0,
+                        'daerah' => $request->daerah[],
+                        'id' =>  $user = Auth::id()
+                    ];
+                }
+            
+            DaerahUser::insert($daerahuser);
+            return view('dashboard/profile')->with('sukses', 'data berhasil di simpan');
+        
+        // DaerahUser::join('users', 'daerah_user.id', '=', 'users.id');
+
+
     }
     
 }

@@ -9,6 +9,11 @@
 <div class="main-content">
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
+                        @if ($message = Session::get('sukses'))
+                        <div class="alert alert-success" role="alert">
+                           {{ $message }}
+                        </div>
+                        @endif
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="overview-wrap">
@@ -29,7 +34,7 @@
                                             @php
                                             if(count($daerah)){
                                                 foreach ($daerah as $row) {
-                                                    echo $row['daerah'];
+                                                    echo $row->daerah;
                                                 }
                                             }
                                             else{
@@ -63,6 +68,8 @@
         </button>
       </div>
       <div class="modal-body">
+        <form action="/dashboard/daerah" method="POST">
+        @csrf
         <h3>Pengaturan</h3>
         <div class="row" style="margin-top: 5%">
             <div class="col-md-3">
@@ -228,6 +235,8 @@
                 </div>
             </div>
         </div>
+        <button type="submit" value="simpan" class="btn btn-success my-4">Simpan</button>
+        </form>
       </div>
     </div>
   </div>
