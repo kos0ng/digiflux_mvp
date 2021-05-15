@@ -25,7 +25,32 @@
                                 
                             </div>
                         </div>
-                        <div class="row" style="margin-top: 5%">
+                        <div class="row" style="margin-top: 2%">
+                          <div class="col">
+                            <label for="d">Tag</label>
+                            <select name="tag" id="tag">
+                              <option value="">Semua</option>
+                              @php
+                                $allTag = DB::table('master_tag')->get()
+                              @endphp
+                              @foreach($allTag as $tag)
+                                <option value="{{$tag->id_master}}">{{$tag->deskripsi}}</option>
+                              @endforeach
+                            </select>
+                          </div>
+                          <div class="col">
+                            <label for="">Min.Biaya</label>
+                            <input type="number" id="min_biaya">
+                          </div>
+                          <div class="col">
+                            <label for="">Deadline Campaign</label>
+                            <input type="date" id="deadline">
+                          </div>
+                          <div class="col">
+                            <button class="btn btn-primary" id="submitFilter">Filter</button>
+                          </div>
+                        </div>
+                        <div class="row" style="margin-top: 5%" id="wkwkwk">
                             @foreach($list_campaign as $row)
                             <div class="col-lg-4">
                                 <div class="au-card recent-report">
@@ -254,4 +279,35 @@
                     </div>
                 </div>
             </div>
-@endsection
+
+  @endsection
+  
+  @section('filter-js')
+  <script type="text/javascript">
+    $(document).on('click','#submitFilter', function(e){
+    //$('#submitFilter').click(function(e){
+      e.preventDefault();
+      var tag = $("#tag").val()
+      var min_biaya = $("#min_biaya").val()
+      var deadline = $("#deadline").val()
+
+      //console.log([tag,min_biaya,deadline])
+
+      $.ajax({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          url: "{{ route('campaign') }}",
+          type: "GET",
+          data: {tag, min_biaya, deadline},
+          success: function(d){
+            $('div').html(d)
+            $("#tag").val(tag)
+            $("#min_biaya").val(min_biaya)
+            $("#deadline").val(deadline)
+            //console.log(data)
+          }
+      }); 
+    });
+  </script>
+  @endsection

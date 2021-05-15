@@ -9,6 +9,9 @@
     <meta name="author" content="Hau Nguyen">
     <meta name="keywords" content="au theme template">
 
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <!-- Title Page-->
     <title>@yield('title')</title>
 
@@ -307,6 +310,8 @@
 
     <!-- Main JS-->
     <script src="{{ asset('js/main.js') }}"></script>
+    
+    @yield('filter-js')
 
     <script type="text/javascript">
         $(document).ready(function() {
