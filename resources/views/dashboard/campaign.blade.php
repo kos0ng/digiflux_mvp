@@ -27,16 +27,16 @@
                         </div>
                         <div class="row" style="margin-top: 2%">
                           <div class="col">
-                            <label for="d">Tag</label>
-                            <select name="tag" id="tag">
-                              <option value="">Semua</option>
-                              @php
-                                $allTag = DB::table('master_tag')->get()
-                              @endphp
-                              @foreach($allTag as $tag)
-                                <option value="{{$tag->id_master}}">{{$tag->deskripsi}}</option>
-                              @endforeach
-                            </select>
+                            <label>Tag :</label>
+                            @php
+                              $allTag = DB::table('master_tag')->get()
+                            @endphp
+                            @foreach($allTag as $tag)
+                              <div class="col">
+                                <input class="messageCheckbox" type="checkbox" value="{{$tag->id_master}}" id="{{$tag->deskripsi}}" name="filter_tag[]">
+                                <label for="{{$tag->deskripsi}}">{{$tag->deskripsi}}</label>
+                              </div>
+                            @endforeach
                           </div>
                           <div class="col">
                             <label for="">Min.Biaya</label>
@@ -285,13 +285,17 @@
   @section('filter-js')
   <script type="text/javascript">
     $(document).on('click','#submitFilter', function(e){
-    //$('#submitFilter').click(function(e){
       e.preventDefault();
-      var tag = $("#tag").val()
+      var all_tags = []
+      var checked_tags = []
+      var tags = $("input[name='filter_tag[]']").each(function() {
+        all_tags.push(this.value)
+        if (this.checked) { checked_tags.push(this.value) }
+      });
       var min_biaya = $("#min_biaya").val()
       var deadline = $("#deadline").val()
 
-      //console.log([tag,min_biaya,deadline])
+      //console.log([checked_tags,min_biaya,deadline])
 
       $.ajax({
           headers: {
@@ -299,13 +303,14 @@
           },
           url: "{{ route('campaign') }}",
           type: "GET",
-          data: {tag, min_biaya, deadline},
+          data: {all_tags, checked_tags, min_biaya, deadline},
           success: function(d){
             $('div').html(d)
-            $("#tag").val(tag)
+            $("input[name='filter_tag[]']").each(function() {
+              if (checked_tags.includes(this.value)) { this.checked = true }
+            });
             $("#min_biaya").val(min_biaya)
             $("#deadline").val(deadline)
-            //console.log(data)
           }
       }); 
     });

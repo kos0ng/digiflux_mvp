@@ -176,14 +176,15 @@ class TaskController extends Controller
 
     public function list_campaign(Request $request){
         // $user = Auth::user();
-        $tag = $request->input('tag');
+        $all_tags = $request->input('all_tags');
+        $checked_tags = $request->input('checked_tags');
         $min_biaya = $request->input('min_biaya');
         $deadline = $request->input('deadline');
 
-        if($tag || $min_biaya || $deadline){
+        if($checked_tags || $min_biaya || $deadline){
             $data['list_campaign'] = Campaign::join('users','campaign.id_user','=','users.id')
                                     ->join('produk_tag','campaign.id_campaign','=','produk_tag.id_campaign')
-                                    ->where('id_master', $tag ? '=' : '!=', $tag ? $tag : 'null')
+                                    ->whereIn('id_master', $checked_tags ? $checked_tags : $all_tags)
                                     ->where('biaya', '>=', $min_biaya ? $min_biaya : 0)
                                     ->whereDate('deadline', $deadline ? '=' : '!=', $deadline ? $deadline : 'null')
                                     ->where('tipe',0)->distinct()->get(['campaign.*','users.name']);
@@ -193,7 +194,6 @@ class TaskController extends Controller
             $data['list_campaign'] = Campaign::join('users','campaign.id_user','=','users.id')->where('tipe',0)->get(['campaign.*','users.name']);
         }
 
-        // print_r($data['list_campaign']);die();
         return view('dashboard/campaign',$data);
     }
 
