@@ -282,7 +282,7 @@
 
   @endsection
   
-  @section('filter-js')
+  @section('filter-campaign')
   <script type="text/javascript">
     $(document).on('click','#submitFilter', function(e){
       e.preventDefault();

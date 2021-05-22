@@ -311,7 +311,9 @@
     <!-- Main JS-->
     <script src="{{ asset('js/main.js') }}"></script>
     
-    @yield('filter-js')
+    @yield('filter-campaign')
+
+    @yield('filter-influencer')
 
     <script type="text/javascript">
         $(document).ready(function() {
