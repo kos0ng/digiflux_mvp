@@ -25,7 +25,6 @@
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#buatCampaign">
   + Buat Campaign
 </button>
-
 <!-- Modal -->
 <div class="modal fade" id="buatCampaign" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -74,9 +73,6 @@
           timeline
         </div>
         <h3>Buat Campaign</h3>
-        @if(count($errors)>0)
-                                        <div class="col-md-2"></div><div class="col-md-10" style="color: red">{{ $errors}}</div>
-        @endif
         <div class="row" style="margin-top: 5%">
           <div class="col-md-12">
             <form action="" method="POST" enctype="multipart/form-data">
@@ -248,9 +244,6 @@
           timeline
         </div>
         <h3>Private Campaign</h3>
-        @if(count($errors)>0)
-          <div class="col-md-2"></div><div class="col-md-10" style="color: red">{{ $errors}}</div>
-        @endif
         <div class="row" style="margin-top: 5%">
           <div class="col-md-12">
             <form action="" method="POST" enctype="multipart/form-data">
@@ -392,10 +385,16 @@
                                 
                             </div>
                         </div>
+                        <br>
+                        <!-- Pesan Error -->
+                        @if(count($errors)>0)
+                        <h4 class="text-danger mb-2">Proses Membuat Campaign Gagal !</h4>
+                          @foreach ($errors->all() as $error)
+                            <li class="text-danger">{{ $error }}</li>
+                          @endforeach
+                        @endif
                         <div class="row" style="margin-top: 5%">
-                          @if(count($errors)>0)
-                                        <div class="col-md-2"></div><div class="col-md-10" style="color: red">{{ $errors}}</div>
-        @endif
+  
                             {{-- <div class="col-lg-">
                             </div> --}}
                             
