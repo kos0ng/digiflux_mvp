@@ -201,38 +201,79 @@
                         <p>Lokasi follower</p>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <input type="number" name="percent[]" class="form-control">
+                @php
+                $daerah = DB::table('daerah_user')->where('id', Auth::id());
+                if(count($daerah)){
+                    @foreach ($daerah as $item)
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="number" name="percent[]" value="{{ $item->percent }}" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="number" name="daerah[]" value="{{ $item->daerah }}" class="form-control">
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <input type="number" name="daerah[]" class="form-control">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="number" name="percent[]" value="{{ $item->percent }}" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="number" name="daerah[]" value="{{ $item->daerah }}" class="form-control">
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <input type="number" name="percent[]" class="form-control">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="number" name="percent[]" value="{{ $item->percent }}" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="number" name="daerah[]" value="{{ $item->daerah }}" class="form-control">
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <input type="number" name="daerah[]" class="form-control">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="number" name="percent[]" value="{{ $item->percent }}" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="number" name="daerah[]" value="{{ $item->daerah }}" class="form-control">
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <input type="number" name="percent[]" class="form-control">
+                }else{
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="number" name="percent[]" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="number" name="daerah[]" class="form-control">
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <input type="number" name="daerah[]" class="form-control">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="number" name="percent[]" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="number" name="daerah[]" class="form-control">
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <input type="number" name="percent[]" class="form-control">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="number" name="percent[]" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="number" name="daerah[]" class="form-control">
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <input type="number" name="daerah[]" class="form-control">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="number" name="percent[]" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="number" name="daerah[]" class="form-control">
+                        </div>
                     </div>
-                </div>
+
+                }
+                @endforeach
+                @endphp
             </div>
         </div>
         <button type="submit" value="simpan" class="btn btn-success my-4">Simpan</button>
