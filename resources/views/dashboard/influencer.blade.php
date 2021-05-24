@@ -348,32 +348,29 @@
                       <div class="col-md-6">
                       <label for="tag">Tag</label>
                       <select value="tag" class="mul-select col filter" id="filter-tag">
-                        {{--  @foreach ($tags as $tag )
+                        <option value="">Pilih Tag</option>
+                        @foreach ($tag_influencer as $tag )
                         <option value="{{ $tag->id_master }}">{{ $tag->deskripsi }}</option>
-                        @endforeach  --}}
-
-                        <option value="foodist">foodist</option>
-                        <option value="lifestyle">lifestyle</option>
+                        @endforeach
                       </select>
                     </div>
 
                     <div class="col-md-6">
                       <label for="jeniskelamin">Jenis Kelamin</label>
-                      <select value="jeniskelamin" class="mul-select col filter" id="filter-gender">
-                        {{--  @foreach ($users as $user )
-                        <option value="{{ $user->gender }}">{{ $user->gender }}</option>
-                        @endforeach
-                      </select>  --}}
-                      <option value="Laki - Laki">Laki - Laki</option>
-                      <option value="Perempuan">Perempuan</option>
+                      <select value="" class="mul-select col filter" id="filter-gender">
+                        <option value="Perempuan">Pilih Jenis Kelamin</option>
+                        <option value="Perempuan">Perempuan</option>
+                        <option value="Laki - Laki">Laki - Laki</option> 
                       </select>
                     </div>
 
                     <div class="col-md-6">
                       <label for="kota">Kota / Kabupaten</label>
                       <select value="kota" class="mul-select col filter" id="filter-kota">
-                        <option value="1">Lamongan</option>
-                        <option value="2">Surabaya</option>
+                        <option value="">Pilih Daerah</option>
+                        @foreach ($daerah_influencer as $daerah )
+                        <option value="{{ $daerah->daerah }}">{{ $daerah->daerah }}</option>
+                        @endforeach
                       </select>
                     </div>
 
@@ -465,13 +462,13 @@
       })
     }).then(function(response){
       return response.json()
-    }).then(function(responseJson){
-      console.log(responseJson)
+    }).then(function(responseJSON){
+      console.log(responseJSON)
       $("#filter").modal("hide")
 
       const container = document.querySelector("#list-influencer")
       container.innerHTML = ""
-      responseJson["list_campaign"].forEach(function(campaign) {
+      responseJ["list_campaign"].forEach(function(campaign) {
         container.innerHTML += `
       <div class="col-lg-4">
         <div class="au-card recent-report">
@@ -483,7 +480,7 @@
                     <div class="col-md-7">
                         <h4>${campaign.name}</h4>
                         <p>${campaign.nama}</p>
-                        <p>${responseJson.kota}</p>
+                        <p>${responseJSON.kota}</p>
                     </div>
                 </div>
                 <div class="row" style="margin-top: 5%">

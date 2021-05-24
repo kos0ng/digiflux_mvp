@@ -6,10 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
-use App\user;
+use App\Models\user;
 use App\Models\Influencer;
 use App\Models\Campaign;
 use App\Models\CampaignProcess;
+use App\Models\MasterTag;
 use Auth;
 use Session;
 
@@ -219,6 +220,8 @@ class TaskController extends Controller
     public function influencer()
     {
         $data['list_influencer'] = Influencer::join('users', 'influencer.id', '=', 'users.id')->get(['influencer.*', 'photo']);
+        $data['tag_influencer'] = MasterTag::all();
+        $data['daerah_influencer'] = User::get('daerah');
         // print_r($data['list_influencer']);
         return view('dashboard/influencer', $data);
     }
@@ -304,38 +307,38 @@ class TaskController extends Controller
 
     public function filter_influencer(Request $request)
     {
-        $tag = $request->input('tag');
-        $gender = $request->input('gender');
-        $kota = $request->input('kota');
-        $minFollower = $request->input('minFollower');
-        $maxFollower = $request->input('maxFollower');
-        $minAge = $request->input('minAge');
-        $maxAge = $request->input('maxAge');
 
-        $response = [
-            "tag" => $tag,
-            "gender" => $gender,
-            "kota" => $kota,
-            "minFollower" => $minFollower,
-            "maxFollower" => $maxFollower,
-            "minAge" => $minAge,
-            "maxAge" => $maxAge
-        ];
+        if ($request->input('tag') != null) {
+            $response['tag'] = DB::table('tag')
+                ->join('users', 'tag.id_user', '=', 'users.id')
+                ->join('master_tag', 'tag.id_master', '=', 'master_tag.id_master')
+                ->select('users.*', 'master_tag.deskripsi')
+                ->where('tag.id_master', $request->tag);
+            // $response['tag'] = $response['tag'];
+        } else {
+            return "Data Tidak Ditemukan";
+        }
 
-        $response['list_campaign'] = Campaign::join('users', 'campaign.id_user', '=', 'users.id')->where('tipe', 0)->get(['campaign.*', 'users.name']);
+        if ($request->input('gender') != null) {
+            $response['gender'] = DB::table('users')
+                ->where('users.gender', $request->gender);
+        }
+
+        if ($request->input('kota') != null) {
+            $response['kota'] = DB::table('users')
+                ->where('user.daerah', $request->kota);
+        }
+
+        if ($request->input('minFollower') && $request->input('maxFollower') != null) {
+            $response['followers'] = DB::table('influencer')
+                ->whereBetween('follower', [$request->minFollower, $request->maxFollower]);
+        }
+
+        if ($request->input('minAge') && $request->input('maxAge') != null) {
+            $response['followers'] = DB::table('users')
+                ->whereBetween('age', [$request->minAge, $request->maxAge]);
+        }
+
         return $response;
-
-        // if ($checked_tags || $min_biaya || $deadline) {
-        //     $data['list_campaign'] = Campaign::join('users', 'campaign.id_user', '=', 'users.id')
-        //         ->join('produk_tag', 'campaign.id_campaign', '=', 'produk_tag.id_campaign')
-        //         ->whereIn('id_master', $checked_tags ? $checked_tags : $all_tags)
-        //         ->where('biaya', '>=', $min_biaya ? $min_biaya : 0)
-        //         ->whereDate('deadline', $deadline ? '=' : '!=', $deadline ? $deadline : 'null')
-        //         ->where('tipe', 0)->distinct()->get(['campaign.*', 'users.name']);
-        // } else {
-        //     $data['list_campaign'] = Campaign::join('users', 'campaign.id_user', '=', 'users.id')->where('tipe', 0)->get(['campaign.*', 'users.name']);
-        // }
-
-        // return view('dashboard/influencer', $data);
     }
 }
