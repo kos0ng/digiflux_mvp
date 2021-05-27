@@ -180,13 +180,15 @@ class TaskController extends Controller
         $checked_tags = $request->input('checked_tags');
         $min_biaya = $request->input('min_biaya');
         $deadline = $request->input('deadline');
+        $campaign = $request->input('campaign');
 
-        if($checked_tags || $min_biaya || $deadline){
+        if($checked_tags || $min_biaya || $deadline || $campaign){
             $data['list_campaign'] = Campaign::join('users','campaign.id_user','=','users.id')
                                     ->join('produk_tag','campaign.id_campaign','=','produk_tag.id_campaign')
                                     ->whereIn('id_master', $checked_tags ? $checked_tags : $all_tags)
                                     ->where('biaya', '>=', $min_biaya ? $min_biaya : 0)
                                     ->whereDate('deadline', $deadline ? '=' : '!=', $deadline ? $deadline : 'null')
+                                    ->where('nama','like','%'.$campaign.'%')
                                     ->where('tipe',0)->distinct()->get(['campaign.*','users.name']);
 
         }

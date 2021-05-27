@@ -18,7 +18,7 @@
                         </div>
                         <div class="row" style="margin-top: 2%">
                             <div class="col-md-12">
-                                <input type="text" name="campaign" placeholder="Cari Campaignmu" style="height: 50px;padding-left: 2%;width: 70%">
+                                <input type="text" id="campaign" name="campaign" placeholder="Cari Campaignmu" style="height: 50px;padding-left: 2%;width: 70%">
                                 <input type="button" name="search" class="btn" value="?">
                             </div>
                             <div class="col-md-6">
@@ -294,6 +294,7 @@
       });
       var min_biaya = $("#min_biaya").val()
       var deadline = $("#deadline").val()
+      var campaign = $("#campaign").val()
 
       //console.log([checked_tags,min_biaya,deadline])
 
@@ -303,7 +304,7 @@
           },
           url: "{{ route('campaign') }}",
           type: "GET",
-          data: {all_tags, checked_tags, min_biaya, deadline},
+          data: {all_tags, checked_tags, min_biaya, deadline, campaign},
           success: function(d){
             $('div').html(d)
             $("input[name='filter_tag[]']").each(function() {
