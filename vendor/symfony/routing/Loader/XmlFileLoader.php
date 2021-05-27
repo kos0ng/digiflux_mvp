@@ -31,8 +31,8 @@ class XmlFileLoader extends FileLoader
     use LocalizedRouteTrait;
     use PrefixTrait;
 
-    const NAMESPACE_URI = 'http://symfony.com/schema/routing';
-    const SCHEME_PATH = '/schema/routing/routing-1.0.xsd';
+    public const NAMESPACE_URI = 'http://symfony.com/schema/routing';
+    public const SCHEME_PATH = '/schema/routing/routing-1.0.xsd';
 
     /**
      * Loads an XML file.
@@ -358,7 +358,7 @@ class XmlFileLoader extends FileLoader
     /**
      * Recursively parses the value of a "default" element.
      *
-     * @return array|bool|float|int|string The parsed value
+     * @return array|bool|float|int|string|null The parsed value
      *
      * @throws \InvalidArgumentException when the XML is invalid
      */

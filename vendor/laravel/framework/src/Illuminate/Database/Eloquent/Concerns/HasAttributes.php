@@ -514,11 +514,13 @@ trait HasAttributes
      * Merge new casts with existing casts on the model.
      *
      * @param  array  $casts
-     * @return void
+     * @return $this
      */
     public function mergeCasts($casts)
     {
         $this->casts = array_merge($this->casts, $casts);
+
+        return $this;
     }
 
     /**
@@ -693,7 +695,7 @@ trait HasAttributes
     {
         // First we will check for the presence of a mutator for the set operation
         // which simply lets the developers tweak the attribute as it is set on
-        // the model, such as "json_encoding" an listing of data for storage.
+        // this model, such as "json_encoding" a listing of data for storage.
         if ($this->hasSetMutator($key)) {
             return $this->setMutatedAttributeValue($key, $value);
         }
@@ -777,9 +779,13 @@ trait HasAttributes
     {
         [$key, $path] = explode('->', $key, 2);
 
-        $this->attributes[$key] = $this->asJson($this->getArrayAttributeWithValue(
+        $value = $this->asJson($this->getArrayAttributeWithValue(
             $path, $key, $value
         ));
+
+        $this->attributes[$key] = $this->isEncryptedCastable($key)
+                    ? $this->castAttributeAsEncryptedString($key, $value)
+                    : $value;
 
         return $this;
     }
@@ -842,8 +848,15 @@ trait HasAttributes
      */
     protected function getArrayAttributeByKey($key)
     {
-        return isset($this->attributes[$key]) ?
-                    $this->fromJson($this->attributes[$key]) : [];
+        if (! isset($this->attributes[$key])) {
+            return [];
+        }
+
+        return $this->fromJson(
+            $this->isEncryptedCastable($key)
+                    ? $this->fromEncryptedString($this->attributes[$key])
+                    : $this->attributes[$key]
+        );
     }
 
     /**
@@ -1174,6 +1187,8 @@ trait HasAttributes
      *
      * @param  string  $key
      * @return bool
+     *
+     * @throws \Illuminate\Database\Eloquent\InvalidCastException
      */
     protected function isClassCastable($key)
     {
@@ -1307,6 +1322,16 @@ trait HasAttributes
         $this->mergeAttributesFromClassCasts();
 
         return $this->attributes;
+    }
+
+    /**
+     * Get all of the current attributes on the model for an insert operation.
+     *
+     * @return array
+     */
+    protected function getAttributesForInsert()
+    {
+        return $this->getAttributes();
     }
 
     /**
@@ -1512,7 +1537,7 @@ trait HasAttributes
     }
 
     /**
-     * Get the attributes that have been changed since last sync.
+     * Get the attributes that have been changed since the last sync.
      *
      * @return array
      */

@@ -38,3 +38,4 @@ Route::post('/dashboard/acceptance', 'TaskController@acceptance');
 Route::post('/dashboard/campaign_progress', 'TaskController@campaign_progress');
 Route::get('/dashboard/influencer/{id_campaign}', 'TaskController@private_campaign')->name('private_campaign');
 Route::post('/dashboard/influencer', 'TaskController@influencer_act');
+Route::post('/dashboard/profile', 'TaskController@update_profile')->name('update_profile');
