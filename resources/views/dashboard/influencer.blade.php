@@ -21,12 +21,37 @@
                                 <select style="height: 50px;width: 20%">
                                   <option>Tidak ada campaign</option>
                                 </select>
-                                <input type="text" name="campaign" placeholder="Cari Influencer" style="height: 50px;padding-left: 2%;width: 70%">
+                                <input type="text" id="influencer" name="influencer" placeholder="Cari Influencer" style="height: 50px;padding-left: 2%;width: 70%">
                                 <input type="button" name="search" class="btn" value="?">
                             </div>
                             <div class="col-md-6">
                                 
                             </div>
+                        </div>
+                         <div class="row" style="margin-top: 2%">
+                          <div class="col">
+                            <label>Tag :</label>
+                            @php
+                              $allTag = DB::table('master_tag')->get()
+                            @endphp
+                            @foreach($allTag as $tag)
+                              <div class="col">
+                                <input class="messageCheckbox" type="checkbox" value="{{$tag->id_master}}" id="{{$tag->deskripsi}}" name="filter_tag[]">
+                                <label for="{{$tag->deskripsi}}">{{$tag->deskripsi}}</label>
+                              </div>
+                            @endforeach
+                          </div>
+                          <div class="col">
+                            <label for="">Minimal Follower</label>
+                            <input type="number" id="min_follower">
+                          </div>
+                          <div class="col">
+                            <label for="">Minimal Likes Rata-rata</label>
+                            <input type="number" id="min_likes">
+                          </div>
+                          <div class="col">
+                            <button class="btn btn-primary" id="submitFilter">Filter</button>
+                          </div>
                         </div>
                         <div class="row" style="margin-top: 5%">
                             @foreach($list_influencer as $row)
@@ -73,10 +98,10 @@
                                           <p style="font-size: 12px">Likes rata-rata</p>
                                         </div>
                                         <div class="col-md-6 text-right">
-                                          <h2>{{$row->follower}}</h2>
+                                          <h2>{{$row->engagement}}</h2>
                                         </div>
                                         <div class="col-md-6 text-right">
-                                          <h2>{{$row->following}}</h2>
+                                          <h2>{{$row->likes}}</h2>
                                         </div>
                                         <div class="col-md-6">
                                           <p style="font-size: 12px">View Instastories</p>
@@ -85,10 +110,10 @@
                                           <p style="font-size: 12px">Komentar rata-rata</p>
                                         </div>
                                         <div class="col-md-6 text-right">
-                                          <h2>{{$row->follower}}</h2>
+                                          <h2>{{$row->instastory}}</h2>
                                         </div>
                                         <div class="col-md-6 text-right">
-                                          <h2>{{$row->following}}</h2>
+                                          <h2>{{$row->comments}}</h2>
                                         </div>
                                       </div>
                                       <div class="row" style="margin-top: 5%">
@@ -334,3 +359,40 @@
                 </div>
             </div>
 @endsection
+
+  @section('filter-js')
+  <script type="text/javascript">
+    $(document).on('click','#submitFilter', function(e){
+      e.preventDefault();
+      var all_tags = []
+      var checked_tags = []
+      var tags = $("input[name='filter_tag[]']").each(function() {
+        all_tags.push(this.value)
+        if (this.checked) { checked_tags.push(this.value) }
+      });
+      var min_follower = $("#min_follower").val()
+      var min_likes = $("#min_likes").val()
+      var influencer = $("#influencer").val()
+
+      //console.log([checked_tags,min_biaya,deadline])
+
+      $.ajax({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          url: "{{ route('influencer') }}",
+          type: "GET",
+          data: {all_tags, checked_tags, min_follower, min_likes, influencer},
+          success: function(d){
+            $('div').html(d)
+            $("input[name='filter_tag[]']").each(function() {
+              if (checked_tags.includes(this.value)) { this.checked = true }
+            });
+            $("#min_follower").val(min_follower)
+            $("#min_likes").val(min_likes)
+            $("#influencer").val(influencer)
+          }
+      }); 
+    });
+  </script>
+  @endsection

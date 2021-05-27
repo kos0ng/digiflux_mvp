@@ -220,9 +220,26 @@ class TaskController extends Controller
         }
     }
 
-    public function influencer()
+    public function influencer(Request $request)
     {
-        $data['list_influencer'] = Influencer::join('users', 'influencer.id', '=', 'users.id')->get(['influencer.*', 'photo']);
+        $all_tags = $request->input('all_tags');
+        $checked_tags = $request->input('checked_tags');
+        $min_likes = $request->input('min_likes');
+        $min_follower = $request->input('min_follower');
+        $influencer = $request->input('influencer');
+        if($checked_tags || $min_likes || $min_follower || $influencer){
+            $data['list_influencer'] = Influencer::join('users', 'influencer.id', '=', 'users.id')
+                                    ->join('tag','id_user','=','users.id')
+                                    ->whereIn('id_master', $checked_tags ? $checked_tags : $all_tags)
+                                    ->where('likes','>=',$min_likes ? $min_likes : 0 )
+                                    ->where('follower','>=',$min_follower ? $min_follower : 0)
+                                    ->where('nama','like','%'.$influencer.'%')
+                                    ->get(['influencer.*', 'photo']);
+            // $data['list_influencer'] = Influencer::join('users', 'influencer.id', '=', 'users.id')->get(['influencer.*', 'photo']);
+        }
+        else{
+            $data['list_influencer'] = Influencer::join('users', 'influencer.id', '=', 'users.id')->get(['influencer.*', 'photo']);
+        }
         // print_r($data['list_influencer']);
         return view('dashboard/influencer', $data);
     }

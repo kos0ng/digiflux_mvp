@@ -310,6 +310,7 @@
             $("input[name='filter_tag[]']").each(function() {
               if (checked_tags.includes(this.value)) { this.checked = true }
             });
+            $("#campaign").val(campaign)
             $("#min_biaya").val(min_biaya)
             $("#deadline").val(deadline)
           }
