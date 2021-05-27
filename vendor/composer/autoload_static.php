@@ -535,6 +535,7 @@ class ComposerStaticInitbdafad1ab7992169c12a71432227a5a2
         'App\\Models\\CampaignProcess' => __DIR__ . '/../..' . '/app/Models/CampaignProcess.php',
         'App\\Models\\Influencer' => __DIR__ . '/../..' . '/app/Models/Influencer.php',
         'App\\Models\\MasterTag' => __DIR__ . '/../..' . '/app/Models/MasterTag.php',
+        'App\\Models\\DaerahUser' => __DIR__ . '/../..' . '/app/Models/DaerahUser.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',

@@ -31,6 +31,7 @@ return array(
     'App\\Models\\CampaignProcess' => $baseDir . '/app/Models/CampaignProcess.php',
     'App\\Models\\Influencer' => $baseDir . '/app/Models/Influencer.php',
     'App\\Models\\MasterTag' => $baseDir . '/app/Models/MasterTag.php',
+    'App\\Models\\DaerahUser' => $baseDir . '/app/Models/DaerahUser.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\Providers\\AuthServiceProvider' => $baseDir . '/app/Providers/AuthServiceProvider.php',

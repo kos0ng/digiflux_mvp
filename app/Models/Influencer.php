@@ -11,10 +11,18 @@ class Influencer extends Model
     public $timestamps = false;
     protected $table = 'influencer';
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role',
-        'image',
+        'username',
+        'nama',
+        'following',
+        'follower',
+        'tipe_bank',
+        'norek',
+        'likes',
+        'comments',
+        'share',
+        'instastory',
+        'engagement',
+        'post',
+        'reach'
     ];
 }

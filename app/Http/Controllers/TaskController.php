@@ -11,6 +11,7 @@ use App\Models\Influencer;
 use App\Models\Campaign;
 use App\Models\CampaignProcess;
 use App\Models\MasterTag;
+use App\Models\DaerahUser;
 use Auth;
 use Session;
 
@@ -182,16 +183,20 @@ class TaskController extends Controller
         $checked_tags = $request->input('checked_tags');
         $min_biaya = $request->input('min_biaya');
         $deadline = $request->input('deadline');
+        $campaign = $request->input('campaign');
 
-        if ($checked_tags || $min_biaya || $deadline) {
-            $data['list_campaign'] = Campaign::join('users', 'campaign.id_user', '=', 'users.id')
-                ->join('produk_tag', 'campaign.id_campaign', '=', 'produk_tag.id_campaign')
-                ->whereIn('id_master', $checked_tags ? $checked_tags : $all_tags)
-                ->where('biaya', '>=', $min_biaya ? $min_biaya : 0)
-                ->whereDate('deadline', $deadline ? '=' : '!=', $deadline ? $deadline : 'null')
-                ->where('tipe', 0)->distinct()->get(['campaign.*', 'users.name']);
-        } else {
-            $data['list_campaign'] = Campaign::join('users', 'campaign.id_user', '=', 'users.id')->where('tipe', 0)->get(['campaign.*', 'users.name']);
+        if($checked_tags || $min_biaya || $deadline || $campaign){
+            $data['list_campaign'] = Campaign::join('users','campaign.id_user','=','users.id')
+                                    ->join('produk_tag','campaign.id_campaign','=','produk_tag.id_campaign')
+                                    ->whereIn('id_master', $checked_tags ? $checked_tags : $all_tags)
+                                    ->where('biaya', '>=', $min_biaya ? $min_biaya : 0)
+                                    ->whereDate('deadline', $deadline ? '=' : '!=', $deadline ? $deadline : 'null')
+                                    ->where('nama','like','%'.$campaign.'%')
+                                    ->where('tipe',0)->distinct()->get(['campaign.*','users.name']);
+
+        }
+        else{
+            $data['list_campaign'] = Campaign::join('users','campaign.id_user','=','users.id')->where('tipe',0)->get(['campaign.*','users.name']);
         }
 
         return view('dashboard/campaign', $data);
@@ -340,5 +345,45 @@ class TaskController extends Controller
         }
 
         return $response;
+        }
+        $data['daerah'] = DB::table('daerah_user')->where('id', $user->id)->get('daerah');
+        return view('dashboard/profile', $data);
+    }
+
+    public function update_profile(Request $request)
+    {
+        $user = Auth::user();
+        $response = Http::get('http://127.0.0.1:5000/scrap/' . $request->username);
+        $resp = $response->json();
+        $tag = $request->tag;
+        $influencer = Influencer::find($user->id);
+        $influencer->username = $request->username;
+        $user->name = $request->name;
+        $influencer->follower = $resp['follower'];
+        $influencer->following = $resp['following'];
+        $influencer->likes = $resp['likes_average'];
+        $influencer->comments = $resp['comments_average'];
+        $influencer->post = $resp['total_posts'];
+        $influencer->tipe_bank = $request->bank;
+        $influencer->norek = $request->norek;
+        $user->no_hp = $request->no_hp;
+        $influencer->share = $request->share;
+        $influencer->reach = $request->reach;
+        $influencer->instastory = $request->instastory;
+        $influencer->engagement = $request->engagement;
+        $influencer->save();
+        $user->save();
+        for ($i = 0; $i < count($request->daerah); $i++) {
+            if($request->daerah[$i]!=''){
+                $daerahuser[$i] = [
+                    'percent' => $request->percent[$i],
+                    'daerah' => $request->daerah[$i],
+                    'id' =>  $user->id
+                ];    
+            }
+        }
+        DaerahUser::where('id',$user->id)->delete();
+        DaerahUser::insert($daerahuser);
+        return redirect('dashboard/profile')->with('sukses', 'data berhasil di simpan');
     }
 }
