@@ -293,22 +293,40 @@ class TaskController extends Controller
         return view('dashboard/profile', $data);
     }
 
-    public function daerah_user(Request $request)
+    public function update_profile(Request $request)
     {
-
-        for ($i = 0; $i <= count($request); $i++) {
-
-            $daerahuser[] = [
-                'percent' => 0,
-                'daerah' => $request->daerah[],
-                'id' =>  $user = Auth::id()
-            ];
+        $user = Auth::user();
+        $response = Http::get('http://127.0.0.1:5000/scrap/' . $request->username);
+        $resp = $response->json();
+        $tag = $request->tag;
+        $influencer = Influencer::find($user->id);
+        $influencer->username = $request->username;
+        $user->name = $request->name;
+        $influencer->follower = $resp['follower'];
+        $influencer->following = $resp['following'];
+        $influencer->likes = $resp['likes_average'];
+        $influencer->comments = $resp['comments_average'];
+        $influencer->post = $resp['total_posts'];
+        $influencer->tipe_bank = $request->bank;
+        $influencer->norek = $request->norek;
+        $user->no_hp = $request->no_hp;
+        $influencer->share = $request->share;
+        $influencer->reach = $request->reach;
+        $influencer->instastory = $request->instastory;
+        $influencer->engagement = $request->engagement;
+        $influencer->save();
+        $user->save();
+        for ($i = 0; $i < count($request->daerah); $i++) {
+            if($request->daerah[$i]!=''){
+                $daerahuser[$i] = [
+                    'percent' => $request->percent[$i],
+                    'daerah' => $request->daerah[$i],
+                    'id' =>  $user->id
+                ];    
+            }
         }
-        DaerahUser::updateOrCreate($daerahuser);
-        return view('dashboard/profile')->with('sukses', 'data berhasil di simpan');
-
-        // DaerahUser::join('users', 'daerah_user.id', '=', 'users.id');
-
-
+        DaerahUser::where('id',$user->id)->delete();
+        DaerahUser::insert($daerahuser);
+        return redirect('dashboard/profile')->with('sukses', 'data berhasil di simpan');
     }
 }
