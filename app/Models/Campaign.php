@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Campaign extends Model
 {
     use HasFactory;
+    protected $primaryKey = 'id_campaign';
     protected $table = 'campaign';
     public $timestamps = false;
     protected $fillable = [

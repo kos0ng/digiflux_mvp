@@ -11,6 +11,7 @@ use App\Models\Influencer;
 use App\Models\Campaign;
 use App\Models\CampaignProcess;
 use App\Models\DaerahUser;
+use App\Models\Umkm;
 use Auth;
 use Session;
 
@@ -77,6 +78,9 @@ class TaskController extends Controller
             'nama' => $resp['name'],
             'follower' => $resp['follower'],
             'following' => $resp['following'],
+            'likes' => $resp['likes_average'],
+            'comments' => $resp['comments_average'],
+            'post' => $resp['total_posts'],
         ]);
         return redirect('/dashboard');
     }
@@ -190,11 +194,12 @@ class TaskController extends Controller
                                     ->where('biaya', '>=', $min_biaya ? $min_biaya : 0)
                                     ->whereDate('deadline', $deadline ? '=' : '!=', $deadline ? $deadline : 'null')
                                     ->where('nama','like','%'.$campaign.'%')
+                                    ->where('payment',0)
                                     ->where('tipe',0)->distinct()->get(['campaign.*','users.name']);
 
         }
         else{
-            $data['list_campaign'] = Campaign::join('users','campaign.id_user','=','users.id')->where('tipe',0)->get(['campaign.*','users.name']);
+            $data['list_campaign'] = Campaign::join('users','campaign.id_user','=','users.id')->where('tipe',0)->where('payment',0)->get(['campaign.*','users.name']);
         }
 
         return view('dashboard/campaign',$data);
@@ -302,6 +307,9 @@ class TaskController extends Controller
     public function influencer_act(Request $request)
     {
         $id_campaign = $request->id_campaign;
+        if($id_campaign==''){
+            return redirect('/dashboard/influencer')->with('error', 'Belum memilih campaign');
+        }
         $id_user = $request->id_user;
         $campaign_proc = new CampaignProcess;
         $campaign_proc->id_campaign = $id_campaign;
@@ -314,49 +322,118 @@ class TaskController extends Controller
     public function profile()
     {
         $user = Auth::user();
-        if (Session::get('role') == 2) {
-            $data['all'] = Influencer::join('users', 'influencer.id', '=', 'users.id')->first();
-        } else {
-            $data['all'] = $user;
-        }
         $data['daerah'] = DB::table('daerah_user')->where('id', $user->id)->get('daerah');
-        return view('dashboard/profile', $data);
+        if (Session::get('role') == 2) {
+            $data['all'] = Influencer::rightJoin('users', 'influencer.id', '=', 'users.id')->where('users.id',$user->id)->first();
+            return view('dashboard/profile', $data);
+        } else {
+            $data['all'] = Umkm::rightJoin('users', 'umkm.id', '=', 'users.id')->where('users.id',$user->id)->first();
+            return view('dashboard/profile_umkm', $data);
+        }
     }
 
     public function update_profile(Request $request)
     {
         $user = Auth::user();
-        $response = Http::get('http://127.0.0.1:5000/scrap/' . $request->username);
-        $resp = $response->json();
-        $tag = $request->tag;
-        $influencer = Influencer::find($user->id);
-        $influencer->username = $request->username;
-        $user->name = $request->name;
-        $influencer->follower = $resp['follower'];
-        $influencer->following = $resp['following'];
-        $influencer->likes = $resp['likes_average'];
-        $influencer->comments = $resp['comments_average'];
-        $influencer->post = $resp['total_posts'];
-        $influencer->tipe_bank = $request->bank;
-        $influencer->norek = $request->norek;
-        $user->no_hp = $request->no_hp;
-        $influencer->share = $request->share;
-        $influencer->reach = $request->reach;
-        $influencer->instastory = $request->instastory;
-        $influencer->engagement = $request->engagement;
-        $influencer->save();
-        $user->save();
-        for ($i = 0; $i < count($request->daerah); $i++) {
-            if($request->daerah[$i]!=''){
-                $daerahuser[$i] = [
-                    'percent' => $request->percent[$i],
-                    'daerah' => $request->daerah[$i],
-                    'id' =>  $user->id
-                ];    
+        if (Session::get('role') == 2) {
+            $response = Http::get('http://127.0.0.1:5000/scrap/' . $request->username);
+            $resp = $response->json();
+            $tag = $request->tag;
+            $influencer = Influencer::find($user->id);
+            $influencer->username = $request->username;
+            $user->name = $request->name;
+            $influencer->follower = $resp['follower'];
+            $influencer->following = $resp['following'];
+            $influencer->likes = $resp['likes_average'];
+            $influencer->comments = $resp['comments_average'];
+            $influencer->post = $resp['total_posts'];
+            $influencer->tipe_bank = $request->bank;
+            $influencer->norek = $request->norek;
+            $user->no_hp = $request->no_hp;
+            $influencer->share = $request->share;
+            $influencer->reach = $request->reach;
+            $influencer->instastory = $request->instastory;
+            $influencer->engagement = $request->engagement;
+            if(isset($request->photo)){
+                $imageName = time() + $user->id . '.' . $request->photo->getClientOriginalExtension();;
+                $request->photo->move(public_path('images/profile'), $imageName);
+                $user->photo = $imageName;
+            }
+            $influencer->save();
+            $user->save();
+            for ($i = 0; $i < count($request->daerah); $i++) {
+                if($request->daerah[$i]!=''){
+                    $daerahuser[$i] = [
+                        'percent' => $request->percent[$i],
+                        'daerah' => $request->daerah[$i],
+                        'id' =>  $user->id
+                    ];    
+                }
+            }
+            if(isset($daerahuser)){
+                DaerahUser::where('id',$user->id)->delete();
+                DaerahUser::insert($daerahuser);
             }
         }
-        DaerahUser::where('id',$user->id)->delete();
-        DaerahUser::insert($daerahuser);
+        else{
+            $user->name = $request->name;
+            $user->no_hp = $request->no_hp;
+            $umkm = Umkm::updateOrCreate(
+                ['id' => $user->id],
+                ['username' => $request->username,'id' => $user->id]
+            );
+            if(isset($request->photo)){
+                $imageName = time() + $user->id . '.' . $request->photo->getClientOriginalExtension();;
+                $request->photo->move(public_path('images/profile'), $imageName);
+                $user->photo = $imageName;
+            }
+            $user->save();
+            for ($i = 0; $i < count($request->daerah); $i++) {
+                if($request->daerah[$i]!=''){
+                    $daerahuser[$i] = [
+                        'percent' => 0,
+                        'daerah' => $request->daerah[$i],
+                        'id' =>  $user->id
+                    ];    
+                }
+            }
+            if(isset($daerahuser)){
+                DaerahUser::where('id',$user->id)->delete();
+                DaerahUser::insert($daerahuser);
+            }
+
+        }
         return redirect('dashboard/profile')->with('sukses', 'data berhasil di simpan');
+    }
+
+    public function insert_portofolio(Request $request){
+        $user = Auth::user();
+        $count = 0;
+        foreach ($request->photo_portofolio as $row) {
+            $imageName = time() . $user->id . '_portofolio' . $count . '.' . $row->getClientOriginalExtension();
+            $row->move(public_path('images/portofolio'), $imageName);
+            DB::table('photo_portofolio')->insert([
+                'id_user' => $user->id,
+                'filename' => $imageName,
+            ]);
+            $count++;
+        }
+        return redirect('/dashboard/profile');
+    }
+
+    public function payment(Request $request){
+        $id_campaign = $request->id_campaign;
+        $campaign = Campaign::find($id_campaign);
+        $campaign->payment = 1;        
+        $campaign->save();
+        return redirect('dashboard')->with('sukses','Berhasil melakukan pembayaran');
+    }
+
+    public function done(Request $request){
+        $id_campaign = $request->id_campaign;
+        $campaign = Campaign::find($id_campaign);
+        $campaign->status_campaign = 2;        
+        $campaign->save();
+        return redirect('dashboard')->with('sukses','Berhasil melakukan pembayaran');
     }
 }

@@ -5,26 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="assets/css-reset/reset.css" />
-    <link rel="stylesheet" href="assets/css/login_style.css" />
-    <title>Login Influencer</title>
+    <link rel="stylesheet" href="assets/css/brand_style.css" />
+    <title>Login Brand</title>
   </head>
   <body>
     <div class="container">
-      <img alt="Digiflux" class="digiflux-logo" src="assets/img/digiflux.png" />
+      <img
+        alt="Digiflux logo"
+        class="digiflux-logo"
+        src="assets/img/digiflux.png"
+      />
 
       <div class="login">
         <div class="login__options">
-          <a href="/login_brand" style="text-decoration: none"><button class="login__options-btn">Brand</button></a>
-          <button class="login__options-btn btn-active">Influencer</button>
+          <button class="login__options-btn btn-active">Brand</button>
+          <a href="/login" style="text-decoration: none"><button class="login__options-btn">Influencer</button></a>
         </div>
 
-        <h1 class="login__title">Masuk Sebagai Influencer</h1>
+        <h1 class="login__title">Masuk Sebagai Brand</h1>
 
         <p class="login__desc">
           Ciptakan kolaborasi terbaik antara Brand dan Influencer!
         </p>
 
-        <form class="login__form" method="POST" action="{{ route('login') }}">
+        <form class="login__form" method="POST" action="{{route('login')}}">
           @csrf
           <div class="login__form-input">
             <input type="text" placeholder="Email" name="email" />
@@ -42,7 +46,7 @@
 
         <p class="login__account">
           belum punya akun?
-          <a href="/register">Daftar</a>
+          <a href="/register_brand">Daftar</a>
         </p>
       </div>
     </div>

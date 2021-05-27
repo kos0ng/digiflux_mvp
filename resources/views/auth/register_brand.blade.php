@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/assets/css-reset/reset.css" />
-    <link rel="stylesheet" href="/assets/css/influencer_signup.css" />
-    <title>Signup Influencer</title>
+    <link rel="stylesheet" href="/assets/css/brand_signup.css" />
+    <title>Signup Brand</title>
   </head>
   <body>
     <div class="container">
@@ -14,11 +14,11 @@
 
       <div class="signin">
         <div class="signin__options">
-          <a href="/register_brand" style="text-decoration: none"><button class="signin__options-btn">Brand</button></a>
-          <button class="signin__options-btn btn-active">Influencer</button>
+          <button class="signin__options-btn btn-active">Brand</button>
+          <a href="/register" style="text-decoration: none"><button class="signin__options-btn">Influencer</button></a>
         </div>
 
-        <h1 class="signin__form-title">Daftar Sebagai Influencer</h1>
+        <h1 class="signin__form-title">Daftar Sebagai Brand</h1>
 
         <p class="signin__form-desc">
           Daftar dan ciptakan kolaborasi terbaik antara brand dan influencer
@@ -35,10 +35,10 @@
             <input type="email" placeholder="Email" name="email" required />
             <img src="/assets/img/email.png" alt="Email icon" />
           </div>
-          <input type="hidden" name="role" value="2">
+
           <div class="signin__form-agreement">
             <input type="checkbox" class="signin__checkbox-input" />
-
+            <input type="hidden" name="role" value="1">
             <p class="signin__agreement-desc">
               Saya menyetujui semua <a href="#">syarat dan ketentuan</a>
             </p>
@@ -49,7 +49,7 @@
 
         <p class="signin__account">
           sudah punya akun?
-          <a href="/login">Masuk</a>
+          <a href="/login_brand" class="signin-form__login-link">Masuk</a>
         </p>
       </div>
     </div>

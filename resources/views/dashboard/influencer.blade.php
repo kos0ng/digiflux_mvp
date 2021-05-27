@@ -4,11 +4,22 @@
 
 @section('influencer','active')
 
+@section('home_active','/assets/img/home-not-select.png')
+
+@section('groups_active','/assets/img/group-selected.png')
+
+@section('user_active','/assets/img/user-icon.png')
+
 @section('content')
 
 <div class="main-content">
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
+                      @if ($message = Session::get('error'))
+                        <div class="alert alert-danger" role="alert">
+                           {{ $message }}
+                        </div>
+                        @endif
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="overview-wrap">
@@ -18,20 +29,56 @@
                         </div>
                         <div class="row" style="margin-top: 2%">
                             <div class="col-md-12">
-                                <select style="height: 50px;width: 20%">
-                                  <option>Tidak ada campaign</option>
+                                <select style="height: 50px;width: 20%" id="campaign_switch">
+                                  @php
+                                  $list_campaign = DB::table('campaign')->where('id_user',Session::get('id'))->get(['id_campaign','nama']);
+                                  if(count($list_campaign)==0){
+                                    echo '<option>Tidak ada campaign</option>';
+                                  }
+                                  else{
+                                  if(isset($id_campaign)){
+                                    @endphp
+                                    @foreach($list_campaign as $row_l)
+                                    <option value="{{$row_l->id_campaign}}" @if($row_l->id_campaign==$id_campaign) selected @endif >{{$row_l->nama}}</option>
+                                  @endforeach
+                                    @php
+                                  }
+                                  else{
+                                    @endphp
+                                    @foreach($list_campaign as $row_l)
+                                    <option value="{{$row_l->id_campaign}}" >{{$row_l->nama}}</option>
+                                  @endforeach
+                                  @php
+                                  }
+                                  }
+                                  @endphp
                                 </select>
-                                <input type="text" id="influencer" name="influencer" placeholder="Cari Influencer" style="height: 50px;padding-left: 2%;width: 70%">
-                                <input type="button" name="search" class="btn" value="?">
+                                <input type="text" id="influencer" name="influencer" placeholder="Nama Influencer" style="height: 50px;padding-left: 2%;width: 70%">
+                                {{-- <input type="button" name="search" class="btn" value="?"> --}}
                             </div>
                             <div class="col-md-6">
                                 
                             </div>
                         </div>
                          <div class="row" style="margin-top: 2%">
-                          <div class="col">
+                          <div class="col-md-2">
                             <label>Tag :</label>
-                            @php
+                            <button type="button" class="btn btn-primary form-control" data-toggle="modal" data-target="#exampleModal">
+                                Pilih Tag
+                            </button>
+
+                            <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Pilih Tag</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @php
                               $allTag = DB::table('master_tag')->get()
                             @endphp
                             @foreach($allTag as $tag)
@@ -40,17 +87,24 @@
                                 <label for="{{$tag->deskripsi}}">{{$tag->deskripsi}}</label>
                               </div>
                             @endforeach
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
                           </div>
-                          <div class="col">
+                          <div class="col-md-3">
                             <label for="">Minimal Follower</label>
-                            <input type="number" id="min_follower">
+                            <input type="number" id="min_follower" class="form-control">
                           </div>
-                          <div class="col">
+                          <div class="col-md-3">
                             <label for="">Minimal Likes Rata-rata</label>
-                            <input type="number" id="min_likes">
+                            <input type="number" id="min_likes" class="form-control">
                           </div>
-                          <div class="col">
-                            <button class="btn btn-primary" id="submitFilter">Filter</button>
+                          <div class="col-md-3">
+                            <button class="btn btn-primary form-control" id="submitFilter" style="margin-top: 12%">Filter</button>
                           </div>
                         </div>
                         <div class="row" style="margin-top: 5%">
@@ -123,7 +177,7 @@
                                           @php
                                           if(isset($id_campaign)){
                                             @endphp
-                                            <input type="hidden" name="id_campaign" value="{{$id_campaign}}">
+                                            <input type="hidden" id="id_campaign" name="id_campaign" value="{{$id_campaign}}">
                                             @php
                                           }else{
                                             @endphp
@@ -175,7 +229,7 @@
                                           @php
                                           if(isset($id_campaign)){
                                             @endphp
-                                            <input type="hidden" name="id_campaign" value="{{$id_campaign}}">
+                                            <input type="hidden"  id="id_campaign" name="id_campaign" value="{{$id_campaign}}">
                                             @php
                                           }else{
                                             @endphp
@@ -212,18 +266,15 @@
               </div>
             </div>
             <div class="row">
-                 <div class="col-md-3">
-              <img src="/images/profile/{{$row->photo}}">
-            </div>
-            <div class="col-md-3">
-              <img src="/images/profile/{{$row->photo}}">
-            </div>
-            <div class="col-md-3">
-              <img src="/images/profile/{{$row->photo}}">
-            </div>
-            <div class="col-md-3">
-              <img src="/images/profile/{{$row->photo}}">
-            </div>
+              @php
+            $porto = DB::table('photo_portofolio')->where('id_user',$row->id)->get('filename');
+                                $check = count($porto)
+                                @endphp
+            @foreach($porto as $row_p)
+                                <div class="col-md-3">
+                                    <img src="/images/portofolio/{{$row_p->filename}}">
+                                </div>
+                                @endforeach
             </div>
             <div class="row" style="margin-top: 2%">
               <div class="col-md-4">
@@ -238,7 +289,7 @@
             </div>
             <div class="row" style="margin-top: 2%">
               <div class="col-md-4 text-right">
-                <h3>{{$row->following}}</h3>
+                <h3>{{$row->post}}</h3>
               </div>
               <div class="col-md-4 text-right">
                 <h3>{{$row->follower}}</h3>
@@ -258,10 +309,10 @@
             </div>
             <div class="row" style="margin-top: 2%">
               <div class="col-md-6 text-right">
-                <h3>{{$row->following}}</h3>
+                <h3>{{$row->likes}}</h3>
               </div>
               <div class="col-md-6 text-right">
-                <h3>{{$row->follower}}</h3>
+                <h3>{{$row->comments}}</h3>
               </div>
             </div>
             <div class="row" style="margin-top: 2%">
@@ -274,10 +325,10 @@
             </div>
             <div class="row" style="margin-top: 2%">
               <div class="col-md-6 text-right">
-                <h3>{{$row->following}}</h3>
+                <h3>{{$row->share}}</h3>
               </div>
               <div class="col-md-6 text-right">
-                <h3>{{$row->follower}}</h3>
+                <h3>{{$row->instastory}}</h3>
               </div>
             </div>
             <div class="row" style="margin-top: 2%">
@@ -290,10 +341,10 @@
             </div>
             <div class="row" style="margin-top: 2%">
               <div class="col-md-6 text-right">
-                <h3>{{$row->following}}</h3>
+                <h3>{{$row->reach}}</h3>
               </div>
               <div class="col-md-6 text-right">
-                <h3>{{$row->follower}}</h3>
+                <h3>{{$row->engagement}}</h3>
               </div>
             </div>
             <div class="row" style="margin-top: 4%">
@@ -303,39 +354,32 @@
             </div>
             <div class="row" style="margin-top: 2%">
                 <div class="col-md-12">
-                  <div class="row">
-                    <div class="col-md-7">
-                      <input type="text" name="" class="form-control">
-                    </div>
-                    <div class="col-md-2">
-                      (22.000)
-                    </div>
-                    <div class="col-md-3">
-                      Kota
-                    </div>
-                  </div>
-                  <div class="row" style="margin-top: 2%">
-                    <div class="col-md-7">
-                      <input type="text" name="" class="form-control">
-                    </div>
-                    <div class="col-md-2">
-                      (22.000)
-                    </div>
-                    <div class="col-md-3">
-                      Kota
-                    </div>
-                  </div>
-                  <div class="row" style="margin-top: 2%">
-                    <div class="col-md-7">
-                      <input type="text" name="" class="form-control">
-                    </div>
-                    <div class="col-md-2">
-                      (22.000)
-                    </div>
-                    <div class="col-md-3">
-                      Kota
+                  @php
+                  $daerah = DB::table('daerah_user')->where('id', $row->id)->get();
+                  if(count($daerah)){
+                  @endphp
+                    @foreach($daerah as $row_d)
+                    <div class="row">
+                        <div class="col-md-5">
+                          <h3>{{$row_d->percent}}%</h3>
+                        </div>
+                        <div class="col-md-4">
+                          <h3>{{$row_d->daerah}}</h3>
+                        </div>
+                      </div>
+                    @endforeach
+                  @php
+                  }
+                  else{
+                    @endphp
+                    <div class="row">
+                    <div class="col-md-5">
+                      Belum Menambahkan Data Daerah
                     </div>
                   </div>
+                  @php
+                  }
+                  @endphp
                 </div>
             </div>
           </div>

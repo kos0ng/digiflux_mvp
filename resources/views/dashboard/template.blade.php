@@ -161,8 +161,8 @@
         <aside class="menu-sidebar d-none d-lg-block">
             <div class="logo">
                 <a href="#">
-                    <!-- <img src="images/icon/logo.png" alt="Cool Admin" /> -->
-                    <h3>Digiflux</h3>
+                    <img src="/assets/img/digiflux.png" style="margin-left: 15%" />
+                    {{-- <h3>Digiflux</h3> --}}
                 </a>
             </div>
             <div class="menu-sidebar__content js-scrollbar1">
@@ -173,21 +173,21 @@
                     <ul class="list-unstyled navbar__list">
                         <li class="@yield('dashboard')">
                             <a class="js-arrow" href="{{route('home')}}">
-                                <i class="fas fa-tachometer-alt"></i>Beranda</a>
+                                <img src="@yield('home_active')" style="margin-right: 5%;margin-bottom: 2%">Beranda</a>
                         </li>
                         <li class="@yield('influencer')">
                             <a class="js-arrow" href="{{route('influencer')}}">
-                                <i class="fas fa-tachometer-alt"></i>Influencer</a>
+                                <img src="@yield('groups_active')" style="margin-right: 5%;margin-bottom: 2%">Influencer</a>
                         </li>
                         <li class="@yield('profile')">
                             <a class="js-arrow" href="{{route('profile')}}">
-                                <i class="fas fa-tachometer-alt"></i>Profil</a>
+                                <img src="@yield('user_active')" style="margin-right: 9%;margin-bottom: 2%">Profil</a>
                         </li>
                         <li style="margin-top: 270%">
                                  <a href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
                                                     <i class="zmdi zmdi-power"></i>Logout
                                                 </a>
-                                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                                     @csrf
                                                 </form>
                         </li>
@@ -200,15 +200,15 @@
                     <ul class="list-unstyled navbar__list">
                         <li class="@yield('dashboard')">
                             <a class="js-arrow" href="{{route('home')}}">
-                                <i class="fas fa-tachometer-alt"></i>Beranda</a>
+                                <img src="@yield('home_active')" style="margin-right: 5%;margin-bottom: 2%">Beranda</a>
                         </li>
                         <li class="@yield('campaign')">
                             <a class="js-arrow" href="{{route('campaign')}}">
-                                <i class="fas fa-tachometer-alt"></i>Open Campaign</a>
+                                <img src="@yield('groups_active')" style="margin-right: 5%;margin-bottom: 2%">Open Campaign</a>
                         </li>
                         <li class="@yield('profile')">
                             <a class="js-arrow" href="{{route('profile')}}">
-                                <i class="fas fa-tachometer-alt"></i>Profil</a>
+                                 <img src="@yield('user_active')" style="margin-right: 9%;margin-bottom: 2%">Profil</a>
                         </li>
                         <li style="margin-top: 270%">
                                  <a href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
@@ -315,6 +315,11 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
+            $('#campaign_switch').change(function() {
+                $('#id_campaign').val($(this).val());
+            });
+
+
              $("#add").click(function() {
         var lastField = $("#buildyourform div:last");
         var fType = $( "#tag" ).clone();
@@ -369,6 +374,18 @@
         });
         $("#buildyourform5").append(fType);
         $("#buildyourform5").append(removeButton);
+    });
+
+               $("#add6").click(function() {
+        var lastField = $("#buildyourform6 div:last");
+        var fType = $( "#photo_portofolio" ).clone();
+        var removeButton = $("<input type=\"button\" class=\"btn btn-danger\" id=\"remove6\" value=\"x\" style=\"margin-right:1%\" />");
+        removeButton.click(function() {
+            $("#photo_portofolio").last().remove();
+            $("#remove6").last().remove();
+        });
+        $("#buildyourform6").append(fType);
+        $("#buildyourform6").append(removeButton);
     });
     // Setup - add a text input to each footer cell
     $('#searchtable tfoot th').each( function () {

@@ -39,3 +39,8 @@ Route::post('/dashboard/campaign_progress', 'TaskController@campaign_progress');
 Route::get('/dashboard/influencer/{id_campaign}', 'TaskController@private_campaign')->name('private_campaign');
 Route::post('/dashboard/influencer', 'TaskController@influencer_act');
 Route::post('/dashboard/profile', 'TaskController@update_profile')->name('update_profile');
+Route::get('/login_brand', 'HomeController@login_brand')->name('login_brand');
+Route::get('/register_brand', 'HomeController@register_brand')->name('register_brand');
+Route::post('/dashboard/insert_portofolio', 'TaskController@insert_portofolio')->name('insert_portofolio');
+Route::post('/dashboard/payment', 'TaskController@payment')->name('payment');
+Route::post('/dashboard/done', 'TaskController@done')->name('done');

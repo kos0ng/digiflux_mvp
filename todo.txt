@@ -1,0 +1,3 @@
+alert and validation
+check maximum portofolio
+delete profile after update

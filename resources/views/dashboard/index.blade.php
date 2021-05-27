@@ -4,11 +4,22 @@
 
 @section('dashboard','active')
 
+@section('home_active','/assets/img/home-icon.png')
+
+@section('groups_active','/assets/img/groups-icon.png')
+
+@section('user_active','/assets/img/user-icon.png')
+
 @section('content')
 
 <div class="main-content">
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
+                          @if ($message = Session::get('sukses'))
+                        <div class="alert alert-success" role="alert">
+                           {{ $message }}
+                        </div>
+                        @endif
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="overview-wrap">
@@ -409,7 +420,15 @@
                                           <div class="col-md-3">
                                               <h4>{{$row->nama}}</h4>
                                               
-                                              <p>Status : Posted</p>
+                                              <p>Status : 
+
+                                                @if($row->status_campaign==1)
+                                                Posted
+                                                @endif
+                                                @if($row->status_campaign==2)
+                                                Campaign Selesai
+                                                @endif
+                                              </p>
                                               <p>Tipe : 
                                                 @php
                                                 if($row->tipe==0){
@@ -805,7 +824,7 @@ if(Session::get('role')==2){
           if($row->shortcode==''){
           @endphp  
           <div class="col-md-4">
-            <img src="/images/icon/avatar-01.jpg" class="img-thumbnail" width="100%">
+            <img src="/images/icon/post.png" class="img-thumbnail" width="100%">
           </div>
           <div class="col-md-8">
             <div class="row">
@@ -830,7 +849,8 @@ if(Session::get('role')==2){
         }else{
           @endphp
           <div class="col-md-4">
-            <img src="{{$row->url_photo}}" class="img-thumbnail" width="100%">
+            {{-- <img src="{{$row->url_photo}}" class="img-thumbnail" width="100%"> --}}
+            <a href="https://www.instagram.com/p/{{$row->shortcode}}" target="_blank"><button style="margin-top: 15%" class="btn btn-success">Lihat foto</button></a>
           </div>
         <div class="col-md-8">
             <form action="/dashboard/campaign_progress" method="POST" enctype="multipart/form-data">
@@ -843,7 +863,7 @@ if(Session::get('role')==2){
             <div class="row" style="margin-top: 2%">
               <div class="col-md-12">
                 <input type="hidden" name="id_process" value="{{$row->id_process}}">
-                <input type="text" name="link" placeholder="Link postingan" class="form-control" value="{{$row->shortcode}}">
+                <input type="text" name="link" placeholder="Link postingan" class="form-control" value="{{$row->shortcode}}" @if($row->status_campaign==2) disabled @endif>
               </div>
             </div>
             <div class="row" style="margin-top: 4%">
@@ -873,7 +893,7 @@ if(Session::get('role')==2){
             </div>
             <div class="row" style="margin-top: 2%">
               <div class="col-md-12">
-                <input type="text" name="share" class="form-control" value="{{$row->share}}">
+                <input type="text" name="share" class="form-control" value="{{$row->share}}" @if($row->status_campaign==2) disabled @endif>
               </div>
             </div>
             <div class="row" style="margin-top: 4%">
@@ -883,7 +903,7 @@ if(Session::get('role')==2){
             </div>
             <div class="row" style="margin-top: 2%">
               <div class="col-md-12">
-                <input type="text" name="jangkauan" class="form-control" value="{{$row->jangkauan}}">
+                <input type="text" name="jangkauan" class="form-control" value="{{$row->jangkauan}}" @if($row->status_campaign==2) disabled @endif>
               </div>
             </div>
             <div class="row" style="margin-top: 4%">
@@ -893,12 +913,14 @@ if(Session::get('role')==2){
             </div>
             <div class="row" style="margin-top: 2%">
               <div class="col-md-12">
-                <input type="file" name="bukti" class="form-control">
+                <input type="file" name="bukti" class="form-control" @if($row->status_campaign==2) disabled @endif>
               </div>
             </div>
             <div class="row" style="margin-top: 2%">
               <div class="col-md-4" >
+                @if($row->status_campaign==1)
                 <input type="submit" name="submit_link" value="Perbarui" class="btn btn-primary">
+                @endif
               </div>
             </div>
             </form>
@@ -936,7 +958,7 @@ if(Session::get('role')==2){
         $total_biaya = count($influencer)*$row->biaya;
         @endphp
         @foreach($influencer as $row_f)
-        <div class="row">
+        <div class="row" style="margin-top: 2%">
           <div class="col-md-2">
             <div class="row">
               <div class="col-md-12">
@@ -1020,10 +1042,10 @@ if(Session::get('role')==2){
                 <h3>{{$row_f->follower}}</h3>
               </div>
               <div class="col-md-4 text-right">
-                <h3>{{$row_f->follower}}</h3>
+                <h3>{{$row_f->likes}}</h3>
               </div>
               <div class="col-md-4 text-right">
-                <h3>{{$row_f->follower}}</h3>
+                <h3>{{$row_f->comments}}</h3>
               </div>
             </div>
             <div class="row">
@@ -1042,10 +1064,10 @@ if(Session::get('role')==2){
                 <h3>{{$row_f->following}}</h3>
               </div>
               <div class="col-md-4 text-right">
-                <h3>{{$row_f->following}}</h3>
+                <h3>{{$row_f->instastory}}</h3>
               </div>
               <div class="col-md-4 text-right">
-                <h3>{{$row_f->following}}</h3>
+                <h3>{{$row_f->reach}}</h3>
               </div>
             </div>
           </div>
@@ -1067,6 +1089,16 @@ if(Session::get('role')==2){
               <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#bayarCampaign{{$row->id_campaign}}" data-dismiss="modal">
                 Next
               </button>
+              @php
+            }else if($row->payment==1 && $row->status_campaign==1){
+              @endphp
+              <form action="/dashboard/done" method="POST">
+              @csrf
+              <input type="hidden" name="id_campaign" value="{{$row->id_campaign}}">
+              <button type="submit" class="btn btn-success" >
+                Selesai
+              </button>
+              </form>
               @php
             }
             @endphp
@@ -1094,7 +1126,8 @@ if($row->payment==1){
         timeline
         <div class="row" style="margin-top: 2%">
           <div class="col-md-4">
-            <img src="{{$row_f->url_photo}}" class="img-thumbnail" width="100%">
+            {{-- <img src="{{$row_f->url_photo}}" class="img-thumbnail" width="100%"> --}}
+            <a href="https://www.instagram.com/p/{{$row->shortcode}}" target="_blank"><button style="margin-top: 15%" class="btn btn-success">Lihat foto</button></a>
           </div>
         <div class="col-md-8">
             {{ csrf_field() }}
@@ -1209,12 +1242,16 @@ if($row->payment==0){
         </div>
         <div class="row" style="margin-top: 2%">
           <div class="col-md-10">
-            <input type="text" name="bayar" disabled value="https://google.com/" class="form-control">
+            <input type="text" name="bayar" disabled value="https://checkout.xendit.co/web/60af34c03dcd5d401bbcbd15" class="form-control">
           </div>
           <div class="col-md-2">
-            <button class="form-control btn btn-primary">
+            <form action="/dashboard/payment" method="POST">
+            @csrf
+            <input type="hidden" name="id_campaign" value="{{$row->id_campaign}}">
+            <button type="submit" class="form-control btn btn-primary">
               Bayar
             </button>
+            </form>
           </div>
         </div>
       </div>

@@ -4,6 +4,12 @@
 
 @section('profile','active')
 
+@section('home_active','/assets/img/home-not-select.png')
+
+@section('groups_active','/assets/img/groups-icon.png')
+
+@section('user_active','/assets/img/profile-selected.png')
+
 @section('content')
 
 <div class="main-content">
@@ -76,12 +82,13 @@
         </button>
       </div>
       <div class="modal-body">
-        <form action="/dashboard/profile" method="POST">
+        <form action="/dashboard/profile" method="POST" enctype="multipart/form-data">
         @csrf
         <h3>Pengaturan</h3>
         <div class="row" style="margin-top: 5%">
             <div class="col-md-3">
                 <img src="/images/profile/{{$all->photo}}">
+                <input type="file" name="photo" class="form-control">
             </div>
             <div class="col-md-6">
                 <div class="row">
@@ -301,14 +308,39 @@
                                 <h4>Post</h4>
                             </div>
                         </div>
+                        <form action="/dashboard/insert_portofolio" method="POST" enctype="multipart/form-data">
                         <div class="row" style="margin-top: 1%">
+                                @php
+                                $porto = DB::table('photo_portofolio')->where('id_user',Session::get('id'))->get('filename');
+                                $check = count($porto)
+                                @endphp
+                                @foreach($porto as $row_p)
+                                <div class="col-lg-2">
+                                    <img src="/images/portofolio/{{$row_p->filename}}">
+                                </div>
+                                @endforeach
+                            @php
+                            if($check<5){
+                            @endphp
                             <div class="col-lg-2">
-                                <img src="/images/profile/{{$all->photo}}">
+                               @csrf
+                               <fieldset id="buildyourform6">
+                                  <input type="file" name="photo_portofolio[]" id="photo_portofolio" style="width: 80%">
+                                </fieldset>
+                                <input type="button" value="+Tambah" id="add6" class="btn btn-secondary" style="margin-top: 2%" />
                             </div>
                             <div class="col-lg-2">
-                                <input type="file" name="photo_portofolio">
+                                <input type="submit" value="Upload" class="btn btn-success" style="margin-top: 2%" />
                             </div>
+                            @php
+                        }else{
+                            @endphp
+                            
+                        @php
+                        }
+                        @endphp
                         </div>
+                        </form>
                         <div class="row" style="margin-top: 4%">
                             <div class="col-lg-3">
                                 Post

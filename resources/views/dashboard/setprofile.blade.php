@@ -4,6 +4,12 @@
 
 @section('dashboard','active')
 
+@section('home_active','/assets/img/home-icon.png')
+
+@section('groups_active','/assets/img/groups-icon.png')
+
+@section('user_active','/assets/img/user-icon.png')
+
 @section('content')
 
 <div class="main-content">

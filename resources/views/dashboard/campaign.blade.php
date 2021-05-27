@@ -4,6 +4,12 @@
 
 @section('campaign','active')
 
+@section('home_active','/assets/img/home-not-select.png')
+
+@section('groups_active','/assets/img/group-selected.png')
+
+@section('user_active','/assets/img/user-icon.png')
+
 @section('content')
 
 <div class="main-content">
@@ -19,16 +25,31 @@
                         <div class="row" style="margin-top: 2%">
                             <div class="col-md-12">
                                 <input type="text" id="campaign" name="campaign" placeholder="Cari Campaignmu" style="height: 50px;padding-left: 2%;width: 70%">
-                                <input type="button" name="search" class="btn" value="?">
+                                {{-- <input type="button" name="search" class="btn" value="?"> --}}
                             </div>
                             <div class="col-md-6">
                                 
                             </div>
                         </div>
                         <div class="row" style="margin-top: 2%">
-                          <div class="col">
+                          <div class="col-md-2">
                             <label>Tag :</label>
-                            @php
+                             <button type="button" class="btn btn-primary form-control" data-toggle="modal" data-target="#exampleModal">
+                                Pilih Tag
+                            </button>
+
+                            <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Pilih Tag</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        @php
                               $allTag = DB::table('master_tag')->get()
                             @endphp
                             @foreach($allTag as $tag)
@@ -37,17 +58,24 @@
                                 <label for="{{$tag->deskripsi}}">{{$tag->deskripsi}}</label>
                               </div>
                             @endforeach
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
                           </div>
-                          <div class="col">
+                          <div class="col-md-3">
                             <label for="">Min.Biaya</label>
-                            <input type="number" id="min_biaya">
+                            <input type="number" id="min_biaya" class="form-control">
                           </div>
                           <div class="col">
                             <label for="">Deadline Campaign</label>
-                            <input type="date" id="deadline">
+                            <input type="date" id="deadline" class="form-control">
                           </div>
                           <div class="col">
-                            <button class="btn btn-primary" id="submitFilter">Filter</button>
+                            <button class="btn btn-primary form-control" id="submitFilter" style="margin-top: 10%">Filter</button>
                           </div>
                         </div>
                         <div class="row" style="margin-top: 5%" id="wkwkwk">
