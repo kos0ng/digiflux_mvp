@@ -18,14 +18,39 @@
                         </div>
                         <div class="row" style="margin-top: 2%">
                             <div class="col-md-12">
-                                <input type="text" name="campaign" placeholder="Cari Campaignmu" style="height: 50px;padding-left: 2%;width: 70%">
+                                <input type="text" id="campaign" name="campaign" placeholder="Cari Campaignmu" style="height: 50px;padding-left: 2%;width: 70%">
                                 <input type="button" name="search" class="btn" value="?">
                             </div>
                             <div class="col-md-6">
                                 
                             </div>
                         </div>
-                        <div class="row" style="margin-top: 5%">
+                        <div class="row" style="margin-top: 2%">
+                          <div class="col">
+                            <label>Tag :</label>
+                            @php
+                              $allTag = DB::table('master_tag')->get()
+                            @endphp
+                            @foreach($allTag as $tag)
+                              <div class="col">
+                                <input class="messageCheckbox" type="checkbox" value="{{$tag->id_master}}" id="{{$tag->deskripsi}}" name="filter_tag[]">
+                                <label for="{{$tag->deskripsi}}">{{$tag->deskripsi}}</label>
+                              </div>
+                            @endforeach
+                          </div>
+                          <div class="col">
+                            <label for="">Min.Biaya</label>
+                            <input type="number" id="min_biaya">
+                          </div>
+                          <div class="col">
+                            <label for="">Deadline Campaign</label>
+                            <input type="date" id="deadline">
+                          </div>
+                          <div class="col">
+                            <button class="btn btn-primary" id="submitFilter">Filter</button>
+                          </div>
+                        </div>
+                        <div class="row" style="margin-top: 5%" id="wkwkwk">
                             @foreach($list_campaign as $row)
                             <div class="col-lg-4">
                                 <div class="au-card recent-report">
@@ -254,4 +279,41 @@
                     </div>
                 </div>
             </div>
-@endsection
+
+  @endsection
+  
+  @section('filter-js')
+  <script type="text/javascript">
+    $(document).on('click','#submitFilter', function(e){
+      e.preventDefault();
+      var all_tags = []
+      var checked_tags = []
+      var tags = $("input[name='filter_tag[]']").each(function() {
+        all_tags.push(this.value)
+        if (this.checked) { checked_tags.push(this.value) }
+      });
+      var min_biaya = $("#min_biaya").val()
+      var deadline = $("#deadline").val()
+      var campaign = $("#campaign").val()
+
+      //console.log([checked_tags,min_biaya,deadline])
+
+      $.ajax({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          url: "{{ route('campaign') }}",
+          type: "GET",
+          data: {all_tags, checked_tags, min_biaya, deadline, campaign},
+          success: function(d){
+            $('div').html(d)
+            $("input[name='filter_tag[]']").each(function() {
+              if (checked_tags.includes(this.value)) { this.checked = true }
+            });
+            $("#min_biaya").val(min_biaya)
+            $("#deadline").val(deadline)
+          }
+      }); 
+    });
+  </script>
+  @endsection
