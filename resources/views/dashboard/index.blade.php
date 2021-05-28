@@ -1127,7 +1127,7 @@ if($row->payment==1){
         <div class="row" style="margin-top: 2%">
           <div class="col-md-4">
             {{-- <img src="{{$row_f->url_photo}}" class="img-thumbnail" width="100%"> --}}
-            <a href="https://www.instagram.com/p/{{$row->shortcode}}" target="_blank"><button style="margin-top: 15%" class="btn btn-success">Lihat foto</button></a>
+            <a href="https://www.instagram.com/p/{{$row_f->shortcode}}" target="_blank"><button style="margin-top: 15%" class="btn btn-success">Lihat foto</button></a>
           </div>
         <div class="col-md-8">
             {{ csrf_field() }}

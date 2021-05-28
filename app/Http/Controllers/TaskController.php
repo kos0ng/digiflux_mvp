@@ -155,23 +155,23 @@ class TaskController extends Controller
         if ($request->tipe == 0) {
             foreach ($request->daerah as $row) {
                 DB::table('daerah_campaign')->insert([
-                    'id_campaign' => $campaign->id,
+                    'id_campaign' => $campaign->id_campaign,
                     'daerah' => $row,
                 ]);
             }
         }
         foreach ($request->tag as $row) {
             DB::table('produk_tag')->insert([
-                'id_campaign' => $campaign->id,
+                'id_campaign' => $campaign->id_campaign,
                 'id_master' => $row,
             ]);
         }
         $count = 0;
         foreach ($request->photo_example as $row) {
-            $imageName = time() . $campaign->id . '_example' . $count . '.' . $row->getClientOriginalExtension();
+            $imageName = time() . $campaign->id_campaign . '_example' . $count . '.' . $row->getClientOriginalExtension();
             $row->move(public_path('images/example'), $imageName);
             DB::table('photo_example')->insert([
-                'id_campaign' => $campaign->id,
+                'id_campaign' => $campaign->id_campaign,
                 'filename' => $imageName,
             ]);
             $count++;
